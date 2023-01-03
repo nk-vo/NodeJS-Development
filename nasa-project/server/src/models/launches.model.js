@@ -31,9 +31,7 @@ async function getLatestFlightNumber() {
 }
 
 async function getAllLaunches() {
-  return await launchesDatabase.find(
-    {},
-    {
+  return await launchesDatabase.find({}, {
       _id: 0,
       __v: 0,
     }
@@ -49,12 +47,9 @@ async function saveLaunch(launch) {
     throw new Error("No matching planet was found.");
   }
 
-  await launchesDatabase.updateOne(
-    {
+  await launchesDatabase.findOneAndUpdate({
       flightNumber: launch.flightNumber,
-    },
-    launch,
-    {
+    }, launch, {
       upsert: true,
     }
   );
