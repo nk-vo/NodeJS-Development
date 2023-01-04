@@ -25,15 +25,16 @@ async function loadLaunchData() {
   const response = await axios.post(SPACEX_API_URL, {
     query: {},
     options: {
+      pagination: false,
       populate: [
         {
-          path: 'rocket',
+          path: "rocket",
           select: {
             name: 1
           }
         },
         {
-          path: 'payloads',
+          path: "payloads",
           select: {
             'customers': 1
           }
