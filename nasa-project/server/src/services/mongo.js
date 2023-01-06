@@ -1,19 +1,19 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const MONGO_URL = process.env.MONGO_URL;
 
-mongoose.connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
+mongoose.connection.once("open", () => {
+  console.log("MongoDB database connection established successfully");
 });
 
-mongoose.connection.on('error', (err) => {
+mongoose.connection.on("error", (err) => {
   console.error(err);
 });
 
 async function mongoConnect() {
-  await mongoose.connect(MONGO_URL)
+  await mongoose.connect(MONGO_URL);
 }
 
 async function mongoDisconnect() {
@@ -22,5 +22,5 @@ async function mongoDisconnect() {
 
 module.exports = {
   mongoConnect,
- mongoDisconnect
+  mongoDisconnect,
 };
