@@ -11,7 +11,23 @@ const app = express();
 app.use(helmet());
 app.use(express.static("public"));
 
-app.get("/secret", (req, res) => {
+function checkLoggedIn(req, res, next)  {
+  const isLoggedIn = true;
+  if (!isLoggedIn) {
+    return res.status(401).json({
+      error: "You must log in!",
+    })
+  }
+  next();
+}
+
+app.use('/auth/google', (req, res) => {});
+
+app.get('/auth/google/callback', (req, res) => {});
+
+app.get('/auth/logout', (req, res) => {});
+
+app.get("/secret", checkLoggedIn, (req, res) => {
   return res.send("Your personal secret value is 42!");
 });
 
