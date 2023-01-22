@@ -9,7 +9,6 @@ const PORT = 3000;
 const app = express();
 
 app.use(helmet());
-app.use(express.static("public"));
 
 function checkLoggedIn(req, res, next)  {
   const isLoggedIn = true;
