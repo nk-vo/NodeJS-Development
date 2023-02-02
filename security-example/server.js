@@ -5,10 +5,11 @@ const express = require('express');
 const helmet = require('helmet');
 const passport = require('passport');
 const { Strategy } = require('passport-google-oauth20');
-const {verify} = require('cookie-session');
 const cookieSession = require('cookie-session');
+const { verify } = require('crypto');
 
 require('dotenv').config();
+
 const PORT = 3000;
 
 const config = {
@@ -29,21 +30,19 @@ function verifyCallback(accessToken, refreshToken, profile, done) {
   done(null, profile);
 }
 
-passport.use(
-  new Strategy(
-    AUTH_OPTIONS,
-    verifyCallback
-  )
-);
+passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
-// Save the session to cookie
+// Save the session to the cookie
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
 // Read the session from the cookie
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
+passport.deserializeUser((id, done) => {
+  // User.findById(id).then(user => {
+  //   done(null, user);
+  // });
+  done(null, id);
 });
 
 const app = express();
@@ -53,13 +52,14 @@ app.use(helmet());
 app.use(cookieSession({
   name: 'session',
   maxAge: 24 * 60 * 60 * 1000,
-  keys: [config.COOKIE_KEY_1, config.COOKIE_KEY_2]
-}))
+  keys: [ config.COOKIE_KEY_1, config.COOKIE_KEY_2 ],
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-function checkLoggedIn(req, res, next) { //req.user
-  const isLoggedIn = true;
+function checkLoggedIn(req, res, next) { 
+  console.log('Current user is:', req.user);
+  const isLoggedIn = req.isAuthenticated() && req.user;
   if (!isLoggedIn) {
     return res.status(401).json({
       error: 'You must log in!',
@@ -68,18 +68,17 @@ function checkLoggedIn(req, res, next) { //req.user
   next();
 }
 
-app.use(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['email'] })
-);
+app.get('/auth/google', 
+  passport.authenticate('google', {
+    scope: ['email'],
+  }));
 
-app.get(
-  '/auth/google/callback',
+app.get('/auth/google/callback', 
   passport.authenticate('google', {
     failureRedirect: '/failure',
     successRedirect: '/',
     session: true,
-  }),
+  }), 
   (req, res) => {
     console.log('Google called us back!');
   }
@@ -99,14 +98,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-https
-  .createServer(
-    {
-      key: fs.readFileSync('key.pem'),
-      cert: fs.readFileSync('cert.pem'),
-    },
-    app
-  )
-  .listen(PORT, () => {
-    console.log(`Listening on port ${PORT}...`);
-  });
+https.createServer({
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+}, app).listen(PORT, () => {
+  console.log(`Listening on port ${PORT}...`);
+});
