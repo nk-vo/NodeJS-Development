@@ -5,7 +5,9 @@ const {
   abortLaunchById,
 } = require('../../models/launches.model');
 
-const { getPagination } = require('../../services/query');
+const {
+  getPagination,
+} = require('../../services/query');
 
 async function httpGetAllLaunches(req, res) {
   const { skip, limit } = getPagination(req.query);
@@ -50,6 +52,7 @@ async function httpAbortLaunch(req, res) {
       error: 'Launch not aborted',
     });
   }
+
   return res.status(200).json({
     ok: true,
   });

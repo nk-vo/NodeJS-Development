@@ -15,13 +15,13 @@ async function populateLaunches() {
       pagination: false,
       populate: [
         {
-          path: "rocket",
+          path: 'rocket',
           select: {
             name: 1
           }
         },
         {
-          path: "payloads",
+          path: 'payloads',
           select: {
             'customers': 1
           }
@@ -31,8 +31,8 @@ async function populateLaunches() {
   });
 
   if (response.status !== 200) {
-    console.log('Problem downloading launch data.');
-    throw new Error('Launch data download failed.');
+    console.log('Problem downloading launch data');
+    throw new Error('Launch data download failed');
   }
 
   const launchDocs = response.data.docs;
@@ -65,8 +65,7 @@ async function loadLaunchData() {
     mission: 'FalconSat',
   });
   if (firstLaunch) {
-    console.log('Launch data already loaded...');
-    return;
+    console.log('Launch data already loaded!');
   } else {
     await populateLaunches();
   }
@@ -77,7 +76,7 @@ async function findLaunch(filter) {
 }
 
 async function existsLaunchWithId(launchId) {
-  return await launchesDatabase.findOne({
+  return await findLaunch({
     flightNumber: launchId,
   });
 }
