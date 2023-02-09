@@ -25,4 +25,4 @@ To run any automated tests, run `npm test`. This will:
 * Run all the server-side tests: `npm test --prefix server` 
 
 ## Host site
-[http://52.25.0.113:8000/](nasa-project)
+[nasa-project](http://52.25.0.113:8000/)
