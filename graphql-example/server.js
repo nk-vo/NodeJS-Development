@@ -9,9 +9,13 @@ const { makeExecutableSchema } = require("@graphql-tools/schema");
 const typesArray = loadFilesSync("**/*", {
   extensions: ["graphql"],
 });
+const resolverArray = loadFilesSync(
+  path.join(__dirname, "./**/*.resolvers.js")
+);
 
 const schema = makeExecutableSchema({
   typeDefs: typesArray,
+  resolvers: resolverArray,
 });
 
 const root = {
@@ -25,7 +29,6 @@ app.use(
   "/graphql",
   graphqlHTTP({
     schema: schema,
-    rootValue: root,
     graphiql: true,
   })
 );
